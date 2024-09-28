@@ -118,7 +118,7 @@ const floor = new THREE.Mesh(
     new THREE.MeshStandardMaterial({color: 0xf0f0f0})
 )
 
-floor.position.y = -2 // test
+floor.position.y = -2
 
 scene.add(floor)
 
