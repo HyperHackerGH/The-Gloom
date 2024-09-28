@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    
+    <meta charset = "utf-8">
+    <meta name = "viewport" content = "width = device-width">
+    <title>The Gloom</title>
+    <link rel = "preconnect" href = "https://fonts.googleapis.com">
+    <link rel = "preconnect" href = "https://fonts.gstatic.com" crossorigin>
+    <link href = "https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel = "stylesheet">
+    <link href = "style.css" rel = "stylesheet" type = "text/css">
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/104/three.min.js"></script>
+    <script src = "https://dl.dropboxusercontent.com/s/jljnyugwrrk4gss/OrbitControls.js"></script>
+    
+</head>
+
+<body>
+
+    <div id = "time"></div>
+
+    <div id = "dialoguecontainer">
+        <div id = "dialogue">Click anywhere to begin.</div>
+    </div>
+
+    <div id = "end">
+        <div id = "endtext">
+            <h1 id = "endtexth"></h1>
+            <span id = "endtime"></span>
+        </div>
+    </div>
+    
+    <div>
+        <div id = "aimtop" class = "aims"></div>
+        <div id = "aimbottom" class = "aims"></div>
+        <div id = "aimleft" class = "aims"></div>
+        <div id = "aimright" class = "aims"></div>
+        
+        <div id = "aimtoprhit" class = "hitaims"></div>
+        <div id = "aimbottomrhit" class = "hitaims"></div>
+        <div id = "aimtoplhit" class = "hitaims"></div>
+        <div id = "aimbottomlhit" class = "hitaims"></div>
+    </div>
+
+    <div id = "infected"></div>
+    <div id = "speeded"></div>
+
+    <div id = "health">
+        <div id = "h1" class = "healthbar"></div>
+        <div id = "h2" class = "healthbar"></div>
+        <div id = "h3" class = "healthbar"></div>
+    </div>
+
+    <canvas id = "minimap" width = "400" height = "400" style = "position: fixed; bottom: 25px; right: 25px; z-index: 99999; background: #000; display: none"></canvas>
+
+    <canvas id = "enemyindicator" width = "500" height = "500"></canvas>
+    
+    <script src = "pointerlockcontrols.js"></script>
+    <script src = "makemaze.js"></script>
+    <script src = "dialogue.js"></script>
+    <script src = "addenemy.js"></script>
+    <script src = "shoot.js"></script>
+    <script src = "math.js"></script>
+    <script src = "functions.js"></script>
+    
+    <script src = "script.js"></script>
+    
+</body>
+
+</html>
