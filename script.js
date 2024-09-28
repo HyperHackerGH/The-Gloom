@@ -61,7 +61,7 @@ var
     velocity = new THREE.Vector3(),
     direction = new THREE.Vector3(),
     speed = 100 
-//test
+
 const clock = new THREE.Clock()
 
 const light = new THREE.PointLight(0xffffff, 3, 10)
