@@ -154,6 +154,7 @@ function update() {
         velocity.x -= velocity.x * 10 * delta
         velocity.z -= velocity.z * 10 * delta
         velocity.y -= 1000 * delta
+
         direction.z = Number(moveforward) - Number(movebackward)
         direction.x = Number(moveleft) - Number(moveright)
         direction.normalize()
@@ -211,7 +212,7 @@ function update() {
 
                 velocity.x = newvel[0] * -1
                 velocity.z = newvel[1] * -1
-                
+
                 controls.getObject().translateX(velocity.x * delta)
                 controls.getObject().translateZ(velocity.z * delta)
             }
