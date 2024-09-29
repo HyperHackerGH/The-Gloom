@@ -254,12 +254,11 @@ function update() {
 
         enemies.forEach((enemy, index) => {
             const head = enemy.children.find(child => child.geometry.parameters.width == 0.2)
-            const torso = enemy.children.find(child => child.geometry.parameters.width == 0.4)
             const larm = enemy.children.find(child => child.geometry.parameters.width == 0.15 && child.position.x == -0.35)
             const rarm = enemy.children.find(child => child.geometry.parameters.width == 0.15 && child.position.x == 0.35)
             
             bullets.forEach((bullet, bulletindex) => {
-                mazepieces.forEach((piece, pieceindex) => {
+                mazepieces.forEach((piece) => {
                     if (colliding(bullet.position.x, bullet.position.z, piece.position.x, piece.position.z, 2)) {
                         scene.remove(bullet)
                         bullets.splice(bulletindex, 1)
@@ -267,9 +266,7 @@ function update() {
                 })
                 
                 if (colliding(enemy.position.x, enemy.position.z, bullet.position.x, bullet.position.z, enemy.userData.hitbox, enemy.position.y, bullet.position.y)) {
-                    var headshot = false
-                    
-                    if (colliding(enemy.position.x, enemy.position.z, bullet.position.x, bullet.position.z, 0.3, head.position.y + enemy.position.y, bullet.position.y)) {headshot = true}
+                    var headshot = colliding(enemy.position.x, enemy.position.z, bullet.position.x, bullet.position.z, 0.3, head.position.y + enemy.position.y, bullet.position.y) ? true : false
                     
                     enemy.userData.health -= 0.5
                     
