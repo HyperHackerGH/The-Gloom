@@ -1,3 +1,5 @@
+const mazesize = 30
+
 function gp(p) {return (p / (mazesize - 1)) * (mazesize * 4 - 6) - (mazesize * 2 - 3)}
 
 function getreldir(ax, ay, bx, by, camangle) {
@@ -12,14 +14,14 @@ function getreldir(ax, ay, bx, by, camangle) {
     return final
 }
 
-function colvel(velocity, wallang, scalefactor = 0.1) {
+function colvel(velx, vely, wallang, scalefactor = 0.1) {
     const thetarad = wallang * Math.PI / 180
 
     const normx = Math.cos(thetarad)
     const normy = Math.sin(thetarad)
 
-    const vx = velocity[0]
-    const vy = velocity[1]
+    const vx = velx
+    const vy = vely
 
     const dotprod = vx * normx + vy * normy
 

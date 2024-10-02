@@ -140,6 +140,7 @@ function makemaze(width, height) {
         if (nextemptyend == "right") nextemptyend = [endspot[0] + 1, endspot[1]]
     }
 
+    const bossspawns = hallcenter(40)
     const shooterspawns = hallcenter()
     const infectorspawns = hallcenter()
     const normalenemyspawns = hallcenter()
@@ -148,6 +149,7 @@ function makemaze(width, height) {
         maze,
         endspot,
         nextempty,
+        bossspawns,
         hordespawns,
         nextemptyend,
         shooterspawns,

@@ -26,6 +26,18 @@ html, body {
 
 #speeded {background: radial-gradient(ellipse at center, transparent, rgba(57, 99, 238, 0.5))}
 
+#aimclick {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #00d5ff;
+    display: none
+}
+
 .aims {
     position: fixed;
     background-color: #00d5ff;
@@ -192,4 +204,13 @@ html, body {
     background: rgba(255, 0, 0, 0.5);
     margin-left: 10px;
     display: inline-block
+}
+
+#key {
+    position: fixed;
+    bottom: 10px;
+    left: 50px;
+    width: 150px;
+    height: 150px;
+    display: none
 }

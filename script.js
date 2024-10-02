@@ -20,12 +20,15 @@ rendererdom.id = "renderer"
 
 document.body.appendChild(rendererdom)
 
-const mazesize = 30
+var minimapdisabled = true
+
+var key = 0
 
 const {
     maze,
     endspot,
     nextempty,
+    bossspawns,
     hordespawns,
     nextemptyend,
     shooterspawns,
@@ -33,12 +36,15 @@ const {
     normalenemyspawns
 } = makemaze(mazesize, mazesize)
 
-var minimapdisabled = true
-
 var
     mazepieces = [],
     wallcolliding = false,
+    ttw = false,
     health = 3,
+
+    lookingatkey = false,
+    collectedkey = false,
+    dropchance = 0
 
     fee = false,
     hordes = [],
@@ -107,10 +113,17 @@ document.body.addEventListener("click", function() {
         started = true
         cleardialogue()
         dialogue("Welcome to The Gloom.", clearafter = 2)
-        // dialogue("Welcome. (2)How did you manage to get yourself in a situation like this? (3)One thing is for sure: (1)You are very unfortunate.")
-        // dialogue("Obviously, you are not alone. (2)I am here to be your guide and help you escape this dark maze. (3)Get ready to face The Gloom.")
     }
-    if (started && controls.isLocked) shoot()
+
+    if (started && controls.isLocked) {
+        if (lookingatkey && !collectedkey) {
+            collectkey()
+            lookingatkey = false
+            dialogue("You have collected the key.", clearafter = 2)
+        }
+
+        else {shoot()}
+    }
 }, false)
 
 const floor = new THREE.Mesh(
@@ -137,13 +150,11 @@ spawnhorde(nextemptyend)
 
 hordespawns.forEach(i => spawnhorde(i))
 normalenemyspawns.forEach(i => addenemy(gp(i[1]), gp(i[0])))
-infectorspawns.forEach(i => addenemy(gp(i[1]), gp(i[0]), "infector"))
+infectorspawns.forEach(i => addenemy(gp(i[1]), gp(i[0]), type = "infector"))
 shooterspawns.forEach(i => addenemy(gp(i[1]), gp(i[0]), type = "shooter"))
+bossspawns.forEach(i => addenemy(gp(i[1]), gp(i[0]), type = "boss"))
 
-// addenemy(-13, -8, "shooter")
-// addenemy(-13, -9)
-// addenemy(-13, -10, "brute")
-// addenemy(-13, -11, "infector")
+// addenemy(-13, -8)
 
 function update() {
     if (controls.isLocked) {
@@ -168,6 +179,8 @@ function update() {
             controls.getObject().translateX(velocity.x * delta)
             controls.getObject().translateZ(velocity.z * delta)
         }
+
+        var collidecount = 0
         
         hordes.forEach((horde, index) => {
             if (horde.every(enemy => !enemies.includes(enemy))) {
@@ -180,7 +193,22 @@ function update() {
             }
         })
 
-        var collidecount = 0
+        if (lookingatkey && !collectedkey) {document.getElementById("aimclick").style.display = "block"}
+        else {document.getElementById("aimclick").style.display = "none"}
+
+        if (key) {
+            const disttokey = camera.position.distanceTo(key.position)
+
+            if (disttokey < 2) {
+                var vector = key.getWorldPosition(new THREE.Vector3()).clone().project(camera)
+                
+                const dist = 45 * (2 - disttokey)
+
+                if (Math.abs((vector.x * 0.5 + 0.5) * window.innerWidth - window.innerWidth / 2) <= dist && Math.abs((-vector.y * 0.5 + 0.5) * window.innerHeight - window.innerHeight / 2) <= dist) {lookingatkey = true}
+
+                else {lookingatkey = false}
+            }
+        }
 
         mazepieces.forEach(piece => {
             if (colliding(controls.getObject().position.x, controls.getObject().position.z, piece.position.x, piece.position.z, 2.2)) {
@@ -208,7 +236,7 @@ function update() {
 
                 reldir = reldir < 0 ? 360 + reldir : reldir
 
-                const newvel = colvel([velocity.x, velocity.z], reldir)
+                const newvel = colvel(velocity.x, velocity.z, reldir)
 
                 velocity.x = newvel[0] * -1
                 velocity.z = newvel[1] * -1
@@ -274,6 +302,13 @@ function update() {
                         scene.remove(enemy)
                         enemies.splice(index, 1)
 
+                        if (enemy.userData.type == "boss") {addenemy(enemy.position.x, enemy.position.z, "shooter")}
+
+                        if (!collectedkey) {
+                            if (Math.random() * 100 > dropchance) {dropchance += 2.5}
+                            else {key = addkey(enemy.position.x, enemy.position.z)}
+                        }
+
                         if (headshot) {
                             speed = 150
                             if (infected) {infected = false}
@@ -330,7 +365,7 @@ function update() {
                     velocity.x = 0
                     velocity.z = 0
 
-                    if (enemy.userData.type == "brute") {health = 0}
+                    if (enemy.userData.type == "brute" || enemy.userData.type == "boss") {health = 0}
 
                     health--
                     updatehealth()
@@ -405,11 +440,17 @@ function update() {
         if (enemydirs.length > 0) indicateenemy(enemydirs)
 
         if (colliding(controls.getObject().position.x, controls.getObject().position.z, b.position.x, b.position.z, 2.5)) {
-            controls.getObject().position.copy(lastpos)
+            if (collectedkey) {
+                controls.getObject().position.copy(lastpos)
 
-            velocity.x = 0
-            velocity.z = 0
-            end("win")
+                velocity.x = 0
+                velocity.z = 0
+                end("win")
+            }
+
+            else if (ttw == false) {dialogue("Only those who wield the key may escape.", clearafter = 2)}
+
+            ttw = true
         }
 
         if (Math.abs(controls.getObject().position.y) > 0) {
@@ -438,8 +479,8 @@ maze.forEach((v, i) => {
     })
 })
 
-if (nextempty == "down") {camera.lookAt(gp(1), 0, gp(1) + 1)}
-if (nextempty == "right") {camera.lookAt(gp(1) + 1, 0, gp(1))}
+if (nextempty == "down") {camera.lookAt(gp(1), 0, gp(2))}
+if (nextempty == "right") {camera.lookAt(gp(2), 0, gp(1))}
 
 window.addEventListener("resize", () => {
     renderer.setSize(window.innerWidth, window.innerHeight)
@@ -478,7 +519,7 @@ function gameloop() {
             var mpx = mps(i.position.z) - 7
             var mpz = mps(i.position.x) - 7
             
-            minimap.fillStyle = "#fff"
+            minimap.fillStyle = "#000"
             
             minimap.fillRect(mpx, mpz, 14, 14)
         }
@@ -496,10 +537,17 @@ function gameloop() {
         if (enemy.userData.aggro) {aggrocount += 1}
 
         if (!minimapdisabled) {
+            var s = 3
+
             if (enemy.userData.type == "infector") {minimap.fillStyle = "#0f0"}
+            else if (enemy.userData.type == "shooter") {minimap.fillStyle = "#00f"}
+            else if (enemy.userData.type == "boss") {
+                minimap.fillStyle = "#f0f"
+                s = 5
+            }
             else {minimap.fillStyle = "#f00"}
             
-            minimap.fillRect(mps(enemy.position.z) - 1, mps(enemy.position.x) - 1, 3, 3)
+            minimap.fillRect(mps(enemy.position.z) - 1, mps(enemy.position.x) - 1, s, s)
         }
     })
 
@@ -508,6 +556,11 @@ function gameloop() {
         const ctx = canvas.getContext("2d")
 
         ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+
+    if (!collectedkey && key) {
+        key.rotation.y += 0.015
+        key.position.y = Math.sin(key.rotation.y) * 0.05 - 0.5
     }
 
     update()

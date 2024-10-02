@@ -78,3 +78,54 @@ function spawnhorde(i) {
         addenemy(x + dfb, z - dfb)
     ])
 }
+
+function addkey(x, z) {
+    const key = new THREE.Group()
+
+    key.add(new THREE.Mesh(
+        new THREE.BoxGeometry(0.1, 0.015, 0.001),
+        new THREE.MeshLambertMaterial({color: 0x00ff00})
+    ))
+
+    const bow = new THREE.Mesh(
+        new THREE.RingGeometry(0.01, 0.02, 32),
+        new THREE.MeshLambertMaterial({color: 0x00ff00, side: THREE.DoubleSide})
+    )
+
+    bow.position.x = 0.065
+
+    key.add(bow)
+
+    const biting1 = new THREE.Mesh(
+        new THREE.BoxGeometry(0.01, 0.02, 0.001),
+        new THREE.MeshLambertMaterial({color: 0x00ff00})
+    )
+
+    const biting2 = new THREE.Mesh(
+        new THREE.BoxGeometry(0.01, 0.02, 0.001),
+        new THREE.MeshLambertMaterial({color: 0x00ff00})
+    )
+
+    biting1.position.y = -0.015
+    biting1.position.x = -0.045
+
+    biting2.position.y = -0.015
+    biting2.position.x = -0.025
+
+    key.add(biting1)
+    key.add(biting2)
+
+    key.position.y = -0.5
+    key.position.x = x
+    key.position.z = z
+
+    scene.add(key)
+
+    return key
+}
+
+function collectkey() {
+    scene.remove(key)
+    collectedkey = true
+    document.getElementById("key").style.display = "block"
+}
