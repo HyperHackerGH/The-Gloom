@@ -304,7 +304,7 @@ function update() {
 
                         if (enemy.userData.type == "boss") {addenemy(enemy.position.x, enemy.position.z, "shooter")}
 
-                        if (!collectedkey) {
+                        if (!collectedkey && !key) {
                             if (Math.random() * 100 > dropchance) {dropchance += 5}
                             else {key = addkey(enemy.position.x, enemy.position.z)}
                         }
