@@ -13,10 +13,25 @@ function addenemy(x, z, type = "normal", inhorde = false) {
     enemy.userData.seeslight = false
     enemy.userData.aggro = false
     enemy.userData.type = type
-    enemy.userData.speed = type == "brute" ? 0.05 : type == "infector" ? 0.07 : 0.06
-    enemy.userData.health = type == "shooter" ? 1 : type == "boss" ? 1.5 : 0.5
-    enemy.userData.color = type == "infector" ? 0x00ff00 : type == "shooter" ? 0x3963EE : type == "boss" ? 0x8c6dff : 0xff0000
-    enemy.userData.scale = type == "normal" ? 0.5 : type == "shooter" ? 0.5 : type == "infector" ? 0.4 : type == "boss" ? 1.6 : 1
+    enemy.userData.speed =
+        type == "brute" ? 0.05 :
+        type == "infector" ? 0.07 :
+        0.06
+    enemy.userData.health = 
+        type == "shooter" ? 1 :
+        type == "boss" ? 1.5 :
+        0.5
+    enemy.userData.color =
+        type == "infector" ? 0x00ff00 :
+        type == "shooter" ? 0x3963EE :
+        type == "boss" ? 0x8c6dff :
+        0xff0000
+    enemy.userData.scale =
+        type == "normal" ? 0.5 :
+        type == "shooter" ? 0.5 :
+        type == "infector" ? 0.4 :
+        type == "boss" ? 1.6 :
+        1
 
     const torso = new THREE.Mesh(
         new THREE.BoxGeometry(0.4, 0.6, 0.2),

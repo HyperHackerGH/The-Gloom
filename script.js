@@ -560,7 +560,7 @@ function gameloop() {
 
     if (!collectedkey && key) {
         key.rotation.y += 0.015
-        key.position.y = Math.sin(key.rotation.y) * 0.05 - 0.5
+        key.position.y = Math.sin(key.rotation.y) * 0.05 - 0.4
     }
 
     update()

@@ -115,7 +115,7 @@ function addkey(x, z) {
     key.add(biting1)
     key.add(biting2)
 
-    key.position.y = -0.5
+    key.position.y = -0.4
     key.position.x = x
     key.position.z = z
 
