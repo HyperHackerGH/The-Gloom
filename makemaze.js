@@ -144,6 +144,25 @@ function makemaze(width, height) {
     const shooterspawns = hallcenter()
     const infectorspawns = hallcenter()
     const normalenemyspawns = hallcenter()
+
+    var teleporterpos = []
+    var ct = []
+
+    maze.forEach((v, i) => {
+        v.forEach((j, k) => {
+            if (j == " " && i != 0 && k != 0) {
+                if (Math.random() > 0.95) {
+                    if (ct.length < 2) {ct.push(new THREE.Vector3(k, 0, i))}
+                    else {
+                        teleporterpos.push(ct)
+                        ct = []
+                    }
+                }
+            }
+        })
+    })
+
+    teleporterpos = shufflearrays(teleporterpos)
     
     return {
         maze,
@@ -153,6 +172,7 @@ function makemaze(width, height) {
         hordespawns,
         nextemptyend,
         shooterspawns,
+        teleporterpos,
         infectorspawns,
         normalenemyspawns
     }

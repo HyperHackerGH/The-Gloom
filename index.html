@@ -12,7 +12,6 @@
     <link href = "https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel = "stylesheet">
     <link href = "style.css" rel = "stylesheet" type = "text/css">
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/104/three.min.js"></script>
-    <script src = "https://dl.dropboxusercontent.com/s/jljnyugwrrk4gss/OrbitControls.js"></script>
     
 </head>
 
@@ -30,6 +29,8 @@
             <span id = "endtime"></span>
         </div>
     </div>
+
+    <div id = "cooldown"></div>
     
     <div>
         <div id = "aimtop" class = "aims"></div>
@@ -54,7 +55,9 @@
         <div id = "h3" class = "healthbar"></div>
     </div>
 
-    <img id = "key" src = "key.png">
+    <img id = "key" src = "key.png" alt = "key">
+
+    <div id = "teleporting"></div>
 
     <canvas id = "minimap" width = "400" height = "400" style = "position: fixed; bottom: 25px; right: 25px; z-index: 99999; background: #fff; display: none"></canvas>
 

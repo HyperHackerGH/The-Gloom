@@ -1,5 +1,4 @@
 THREE.PointerLockControls = function (camera, domElement) {
-
     var scope = this 
 
     this.domElement = domElement || document.body 
@@ -37,18 +36,18 @@ THREE.PointerLockControls = function (camera, domElement) {
         }
     }
 
-    function onPointerlockError() {console.error( "THREE.PointerLockControls: Unable to use Pointer Lock API" ) }
+    function onPointerlockError() {console.error("THREE.PointerLockControls: Unable to use Pointer Lock API")}
 
     this.connect = function () {
-        document.addEventListener( "mousemove", onMouseMove, false ) 
-        document.addEventListener( "pointerlockchange", onPointerlockChange, false ) 
-        document.addEventListener( "pointerlockerror", onPointerlockError, false ) 
+        document.addEventListener("mousemove", onMouseMove, false) 
+        document.addEventListener("pointerlockchange", onPointerlockChange, false) 
+        document.addEventListener("pointerlockerror", onPointerlockError, false) 
     } 
 
     this.disconnect = function () {
-        document.removeEventListener( "mousemove", onMouseMove, false ) 
-        document.removeEventListener( "pointerlockchange", onPointerlockChange, false ) 
-        document.removeEventListener( "pointerlockerror", onPointerlockError, false ) 
+        document.removeEventListener("mousemove", onMouseMove, false) 
+        document.removeEventListener("pointerlockchange", onPointerlockChange, false) 
+        document.removeEventListener("pointerlockerror", onPointerlockError, false) 
     } 
 
     this.dispose = function() {this.disconnect()} 

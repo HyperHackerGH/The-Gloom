@@ -32,19 +32,26 @@ const {
     hordespawns,
     nextemptyend,
     shooterspawns,
+    teleporterpos,
     infectorspawns,
     normalenemyspawns
 } = makemaze(mazesize, mazesize)
 
 var
-    mazepieces = [],
-    wallcolliding = false,
     ttw = false,
     health = 3,
 
+    teleporters = [],
+    teleporting = false,
+
+    mazepieces = [],
+    wallcolliding = false,
+
     lookingatkey = false,
     collectedkey = false,
-    dropchance = 0
+    dropchance = 0,
+
+    lasound = 0,
 
     fee = false,
     hordes = [],
@@ -107,7 +114,11 @@ document.addEventListener("keydown", keydown, false)
 document.addEventListener("keyup", keyup, false)
 
 document.body.addEventListener("click", function() {
-    if (!done) {controls.lock()}
+    if (!done) {
+        controls.lock()
+        // if (document.fullscreenElement == null) {document.documentElement.requestFullscreen()}
+    }
+
     if (!started) {
         begintime = performance.now()
         started = true
@@ -126,26 +137,6 @@ document.body.addEventListener("click", function() {
     }
 }, false)
 
-const floor = new THREE.Mesh(
-    new THREE.BoxGeometry(mazesize * 4, 1, mazesize * 4),
-    new THREE.MeshStandardMaterial({color: 0xf0f0f0})
-)
-
-floor.position.y = -2
-
-scene.add(floor)
-
-const b = new THREE.Mesh(
-    new THREE.BoxGeometry(4, 2, 4),
-    new THREE.MeshLambertMaterial({color: 0x00ff00})
-)
-
-b.position.x = gp(endspot[1])
-b.position.z = gp(endspot[0])
-
-mazepieces.push(b)
-scene.add(b)
-
 spawnhorde(nextemptyend)
 
 hordespawns.forEach(i => spawnhorde(i))
@@ -154,7 +145,30 @@ infectorspawns.forEach(i => addenemy(gp(i[1]), gp(i[0]), type = "infector"))
 shooterspawns.forEach(i => addenemy(gp(i[1]), gp(i[0]), type = "shooter"))
 bossspawns.forEach(i => addenemy(gp(i[1]), gp(i[0]), type = "boss"))
 
-// addenemy(-13, -8)
+teleporterpos.forEach(teleporter => {
+    const s = new THREE.Mesh(
+        new THREE.BoxGeometry(0.2, 0.2, 0.2),
+        new THREE.MeshLambertMaterial({color: 0x00ff00})
+    )
+
+    s.position.copy(new THREE.Vector3(gp(teleporter[0].x), 0, gp(teleporter[0].z)))
+    s.userData.teleported = false
+    scene.add(s)
+
+    const e = new THREE.Mesh(
+        new THREE.BoxGeometry(0.2, 0.2, 0.2),
+        new THREE.MeshLambertMaterial({color: 0x00ff00})
+    )
+
+    e.position.copy(new THREE.Vector3(gp(teleporter[1].x), 0, gp(teleporter[1].z)))
+    e.userData.teleported = false
+    scene.add(e)
+
+    teleporters.push({block: s, target: e})
+    teleporters.push({block: e, target: s})
+})
+
+// addenemy(-53, -49)
 
 function update() {
     if (controls.isLocked) {
@@ -175,12 +189,17 @@ function update() {
 
         const lastpos = controls.getObject().position.clone()
 
-        if (!wallcolliding) {
+        if (!wallcolliding && !teleporting) {
             controls.getObject().translateX(velocity.x * delta)
             controls.getObject().translateZ(velocity.z * delta)
         }
 
         var collidecount = 0
+
+        const cooldownwidth = performance.now() - lastshot
+
+        if (cooldownwidth < 400) {document.getElementById("cooldown").style.width = (400 - cooldownwidth).toString() + "px"}
+        else {document.getElementById("cooldown").style.width = "0px"}
         
         hordes.forEach((horde, index) => {
             if (horde.every(enemy => !enemies.includes(enemy))) {
@@ -205,10 +224,36 @@ function update() {
                 const dist = 45 * (2 - disttokey)
 
                 if (Math.abs((vector.x * 0.5 + 0.5) * window.innerWidth - window.innerWidth / 2) <= dist && Math.abs((-vector.y * 0.5 + 0.5) * window.innerHeight - window.innerHeight / 2) <= dist) {lookingatkey = true}
-
                 else {lookingatkey = false}
             }
         }
+
+        teleporters.forEach(teleporter => {
+            if (colliding(controls.getObject().position.x, controls.getObject().position.z, teleporter.block.position.x, teleporter.block.position.z, 0.6)) {
+                if (!teleporter.block.userData.teleported) {
+                    teleporting = true
+
+                    scene.remove(teleporter.block)
+
+                    setTimeout(() => {
+                        controls.getObject().position.copy(teleporter.target.position)
+
+                        scene.remove(teleporter.target)
+                        teleporters.splice(teleporters.indexOf(teleporter), 1)
+                    }, 1000)
+
+                    for (let i = 0; i < 100; i++) {
+                        setTimeout(() => {document.getElementById("teleporting").style.opacity = i / 100}, i * 10)
+                        setTimeout(() => {document.getElementById("teleporting").style.opacity = (100 - i) / 100}, i * 10 + 1000)
+                    }
+
+                    teleporter.block.userData.teleported = true
+                    teleporter.target.userData.teleported = true
+
+                    setTimeout(() => {teleporting = false}, 2000)
+                }
+            }
+        })
 
         mazepieces.forEach(piece => {
             if (colliding(controls.getObject().position.x, controls.getObject().position.z, piece.position.x, piece.position.z, 2.2)) {
@@ -276,6 +321,7 @@ function update() {
                 
                 health--
                 updatehealth()
+
                 if (health <= 0) {end("lose")}
             }
         })
@@ -418,8 +464,10 @@ function update() {
                 var camdir = camera.getWorldDirection(new THREE.Vector3(0, 0, -1))
                 var camangle = Math.atan2(camdir.x, camdir.z) * (180 / Math.PI) + 180
 
-                enemy.position.add(playerdir.multiplyScalar(enemy.userData.speed))
-                enemy.rotation.y = Math.atan2(playerdir.x, playerdir.z)
+                if (!teleporting) {
+                    enemy.position.add(playerdir.multiplyScalar(enemy.userData.speed))
+                    enemy.rotation.y = Math.atan2(playerdir.x, playerdir.z)
+                }
 
                 const direction = getreldir(
                     controls.getObject().position.x,
@@ -437,7 +485,7 @@ function update() {
             }
         })
 
-        if (enemydirs.length > 0) indicateenemy(enemydirs)
+        if (enemydirs.length > 0) {indicateenemy(enemydirs)}
 
         if (colliding(controls.getObject().position.x, controls.getObject().position.z, b.position.x, b.position.z, 2.5)) {
             if (collectedkey) {
@@ -461,6 +509,26 @@ function update() {
         lasttime = time
     }
 }
+
+const floor = new THREE.Mesh(
+    new THREE.BoxGeometry(mazesize * 4, 1, mazesize * 4),
+    new THREE.MeshStandardMaterial({color: 0xf0f0f0})
+)
+
+floor.position.y = -2
+
+scene.add(floor)
+
+const b = new THREE.Mesh(
+    new THREE.BoxGeometry(4, 2, 4),
+    new THREE.MeshLambertMaterial({color: 0x00ff00})
+)
+
+b.position.x = gp(endspot[1])
+b.position.z = gp(endspot[0])
+
+mazepieces.push(b)
+scene.add(b)
 
 maze.forEach((v, i) => {
     v.forEach((j, k) => {
@@ -524,6 +592,17 @@ function gameloop() {
             minimap.fillRect(mpx, mpz, 14, 14)
         }
 
+        for (let x of teleporters) {
+            const i = x.block
+
+            var mpx = mps(i.position.z) - 2
+            var mpz = mps(i.position.x) - 2
+            
+            minimap.fillStyle = "#0f0"
+            
+            minimap.fillRect(mpx, mpz, 5, 5)
+        }
+
         minimap.fillStyle = "#0f0"
         minimap.fillRect(mps(b.position.z) - 7, mps(b.position.x) - 7, 14, 14)
         
@@ -549,6 +628,12 @@ function gameloop() {
             
             minimap.fillRect(mps(enemy.position.z) - 1, mps(enemy.position.x) - 1, s, s)
         }
+    })
+
+    teleporters.forEach(teleporter => {
+        teleporter.block.rotation.x += Math.random() * 0.02
+        teleporter.block.rotation.y += Math.random() * 0.02
+        teleporter.block.rotation.z += Math.random() * 0.02
     })
 
     if (aggrocount == 0) {

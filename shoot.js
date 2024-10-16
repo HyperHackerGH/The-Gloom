@@ -40,6 +40,7 @@ function shoot(fromenemy = false, enemypos = null) {
             camera.getWorldPosition(startpos)
             
             bullets.push(block)
+            lastshot = performance.now()
         }
 
         block.position.copy(startpos)
@@ -48,8 +49,6 @@ function shoot(fromenemy = false, enemypos = null) {
         const velocity = camdir.clone().multiplyScalar(fromenemy ? 0.2 : 0.5)
 
         scene.add(block)
-
-        lastshot = performance.now()
 
         const updatebullet = () => {
             block.position.add(velocity)

@@ -3,7 +3,7 @@ function updatehealth() {
         for (let i = 1; i <= health; i++) {document.getElementById(`h${i}`).style.animation = ""}
         for (let i = health + 1; i <= 3; i++) {document.getElementById(`h${4 - i}`).style.animation = "getsmall 0.3s ease forwards"}
     }
-    catch (e) {console.log(e)}
+    catch (e) {}
 }
 
 function end(outcome) {
@@ -42,14 +42,11 @@ function indicateenemy(infos) {
     const centerx = canvas.width / 2
     const centery = canvas.height / 2
     const arclength = 0.2
-    const trianglesize = 15
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     infos.forEach(info => {
         const angle = (90 - info.degree) * (Math.PI / 180)
-        const x = centerx + radius * Math.cos(angle)
-        const y = centery + radius * Math.sin(angle)
 
         const r = (info.color >> 16) & 0xFF
         const g = (info.color >> 8) & 0xFF
@@ -128,4 +125,43 @@ function collectkey() {
     scene.remove(key)
     collectedkey = true
     document.getElementById("key").style.display = "block"
+}
+
+function shufflearrays(arr) {
+    let flatarr = arr.flat()
+
+    for (let i = flatarr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [flatarr[i], flatarr[j]] = [flatarr[j], flatarr[i]]
+    }
+
+    let result = []
+    let subarr = arr[0].length
+
+    for (let i = 0; i < flatarr.length; i += subarr) {result.push(flatarr.slice(i, i + subarr))}
+
+    return result
+}
+
+function playsound(name, stopafter, aggro = false, volume = 0.5, loop = false) {
+    if (aggro) {
+        if (performance.now() - lasound < 8000) {return}
+        else {lasound = performance.now()}
+    }
+
+    const listener = new THREE.AudioListener()
+    camera.add(listener)
+
+    const sound = new THREE.Audio(listener)
+
+    const audio = new THREE.AudioLoader()
+
+    audio.load(`sounds/${name}.mp3`, (buffer) => {
+        sound.setBuffer(buffer)
+        sound.setLoop(loop)
+        sound.setVolume(volume)
+        sound.play()
+
+        setTimeout(() => {sound.stop()}, stopafter)
+    })
 }

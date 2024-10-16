@@ -118,7 +118,6 @@ html, body {
     background: rgba(0, 0, 0, 0.5);
     padding: 50px;
     border-radius: 10px;
-    z-index: 99;
     width: 500px;
     height: 100px;
     color: #fff;
@@ -213,4 +212,23 @@ html, body {
     width: 150px;
     height: 150px;
     display: none
+}
+
+#cooldown {
+    height: 10px;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 0, 0, 0.5)
+}
+
+#teleporting {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: #000;
+    opacity: 0
 }
