@@ -1,7 +1,54 @@
+@import url("https://fonts.googleapis.com/css2?family=Emilys+Candy&display=swap");
+
 html, body {
     margin: 0;
     padding: 0;
     overflow: hidden
+}
+
+#start {
+    background: #000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    font-family: "Emilys Candy";
+    color: #fff;
+    font-size: 20px
+}
+
+#starttext {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-size: 30px;
+    text-align: center
+}
+
+#startbutton, #lorebutton {
+    width: 100px;
+    height: 50px;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    font-family: "Emilys Candy";
+    font-size: 20px;
+    cursor: pointer
+}
+
+#startbutton {
+    background: #00d5ff;
+}
+
+#lorebutton {
+    background: #fff
+}
+
+#game {
+    display: none
 }
 
 @keyframes fade {
@@ -23,7 +70,6 @@ html, body {
 }
 
 #infected {background: radial-gradient(ellipse at center, transparent, rgba(0, 255, 0, 0.25))}
-
 #speeded {background: radial-gradient(ellipse at center, transparent, rgba(57, 99, 238, 0.5))}
 
 #aimclick {
@@ -123,6 +169,7 @@ html, body {
     color: #fff;
     font-size: 20px;
     font-family: "Crimson Text";
+    display: none
 }
 
 #time {

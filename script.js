@@ -22,7 +22,7 @@ document.body.appendChild(rendererdom)
 
 var minimapdisabled = true
 
-var key = 0
+var key = null
 
 const {
     maze,
@@ -113,17 +113,32 @@ var keyup = function(e) {
 document.addEventListener("keydown", keydown, false)
 document.addEventListener("keyup", keyup, false)
 
-document.body.addEventListener("click", function() {
-    if (!done) {
+document.getElementById("startbutton").addEventListener("click", () => {
+    if (!started) {
+        document.getElementById("game").style.display = "block"
+        cleardialogue()
+
+        for (let i = 0; i < 100; i++) {
+            setTimeout(() => {document.getElementById("start").style.opacity = 1 - (i / 100)}, i * 10)
+        }
+
+        setTimeout(() => {
+            document.getElementById("dialoguecontainer").style.display = "block"
+            document.getElementById("start").style.display = "none"
+            
+            controls.lock()
+            started = true
+            begintime = performance.now()
+            dialogue("Welcome to The Gloom.", clearafter = 2)
+            // if (document.fullscreenElement == null) {document.documentElement.requestFullscreen()}
+        }, 1000)
+    }
+}, false)
+
+document.body.addEventListener("click", () => {
+    if (started && !done) {
         controls.lock()
         // if (document.fullscreenElement == null) {document.documentElement.requestFullscreen()}
-    }
-
-    if (!started) {
-        begintime = performance.now()
-        started = true
-        cleardialogue()
-        dialogue("Welcome to The Gloom.", clearafter = 2)
     }
 
     if (started && controls.isLocked) {
@@ -229,7 +244,7 @@ function update() {
         }
 
         teleporters.forEach(teleporter => {
-            if (colliding(controls.getObject().position.x, controls.getObject().position.z, teleporter.block.position.x, teleporter.block.position.z, 0.6)) {
+            if (colliding(controls.getObject().position.x, controls.getObject().position.z, teleporter.block.position.x, teleporter.block.position.z, 0.53)) {
                 if (!teleporter.block.userData.teleported) {
                     teleporting = true
 
@@ -595,12 +610,14 @@ function gameloop() {
         for (let x of teleporters) {
             const i = x.block
 
-            var mpx = mps(i.position.z) - 2
-            var mpz = mps(i.position.x) - 2
-            
-            minimap.fillStyle = "#0f0"
-            
-            minimap.fillRect(mpx, mpz, 5, 5)
+            if (!i.userData.teleported) {
+                var mpx = mps(i.position.z) - 2
+                var mpz = mps(i.position.x) - 2
+                
+                minimap.fillStyle = "#0f0"
+                
+                minimap.fillRect(mpx, mpz, 5, 5)
+            }
         }
 
         minimap.fillStyle = "#0f0"

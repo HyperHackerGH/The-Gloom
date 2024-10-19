@@ -100,7 +100,7 @@ function makemaze(width, height) {
 
     for (let i of endspots) {
         if (i[0] + i[1] > endspot[0] + endspot[1]) {endspot = i}
-        if (Math.floor(Math.random() * 5) + 1 == 1 && i[0] != 1 && i[1] != 1) hordespawns.push(i)
+        if (Math.floor(Math.random() * 5) + 1 == 1 && i[0] != 1 && i[1] != 1) {hordespawns.push(i)}
     }
 
     var nextempty = "none"
@@ -134,10 +134,10 @@ function makemaze(width, height) {
     if (walls == 3) {
         nextemptyend = nextemptyend[0]
         
-        if (nextemptyend == "up") nextemptyend = [endspot[0], endspot[1] - 1]
-        if (nextemptyend == "down") nextemptyend = [endspot[0], endspot[1] + 1]
-        if (nextemptyend == "left") nextemptyend = [endspot[0] - 1, endspot[1]]
-        if (nextemptyend == "right") nextemptyend = [endspot[0] + 1, endspot[1]]
+        if (nextemptyend == "up") {nextemptyend = [endspot[0], endspot[1] - 1]}
+        if (nextemptyend == "down") {nextemptyend = [endspot[0], endspot[1] + 1]}
+        if (nextemptyend == "left") {nextemptyend = [endspot[0] - 1, endspot[1]]}
+        if (nextemptyend == "right") {nextemptyend = [endspot[0] + 1, endspot[1]]}
     }
 
     const bossspawns = hallcenter(40)
@@ -148,22 +148,24 @@ function makemaze(width, height) {
     var teleporterpos = []
     var ct = []
 
-    maze.forEach((v, i) => {
-        v.forEach((j, k) => {
-            if (j == " " && i != 0 && k != 0) {
-                if (Math.random() > 0.95) {
-                    if (ct.length < 2) {ct.push(new THREE.Vector3(k, 0, i))}
-                    else {
-                        teleporterpos.push(ct)
-                        ct = []
+    while (teleporterpos.length < 4) {
+        maze.forEach((v, i) => {
+            v.forEach((j, k) => {
+                if (j == " " && i != 1 && k != 1) {
+                    if (Math.random() > 0.975) {
+                        if (ct.length < 2) {ct.push(new THREE.Vector3(k, 0, i))}
+                        else {
+                            teleporterpos.push(ct)
+                            ct = []
+                        }
                     }
                 }
-            }
+            })
         })
-    })
+    }
 
     teleporterpos = shufflearrays(teleporterpos)
-    
+
     return {
         maze,
         endspot,
