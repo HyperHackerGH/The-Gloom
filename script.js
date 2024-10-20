@@ -123,7 +123,7 @@ document.getElementById("startbutton").addEventListener("click", () => {
 
         if (difficulty == "hard") {
             health = 1
-            enemyspeed = 1.3
+            enemyspeed = 1.2
             enemyshottimeout = -1
         }
 

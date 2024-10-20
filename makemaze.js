@@ -151,7 +151,7 @@ function makemaze(width, height) {
     while (teleporterpos.length < 3) {
         maze.forEach((v, i) => {
             v.forEach((j, k) => {
-                if (j == " " && i != 1 && k != 1) {
+                if (j == " " && i != 1 && k != 1 && i != endspot[0] && k != endspot[1] && !hordespawns.some(h => h[0] == i && h[1] == k)) {
                     if (Math.random() > 0.975) {
                         if (ct.length < 2) {ct.push(new THREE.Vector3(k, 0, i))}
                         else {

@@ -1,7 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Emilys+Candy&display=swap");
 
 * {
-    outline: none
+    outline: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
 }
 
 html, body {
@@ -49,7 +53,13 @@ option {
     text-align: center
 }
 
-#startbutton, #lorebutton {
+#restart {
+    display: block;
+    margin: 25px auto;
+    width: 150px
+}
+
+button {
     width: 100px;
     height: 50px;
     color: #000;
