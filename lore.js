@@ -208,7 +208,7 @@ function gameloop() {
         for (let i = 0; i < cubes.length; i++) {cubes[i].position.add(velocities[i]);}
     }
     
-    box.position.y = Math.cos(time * 0.001) * 0.1
+    box.position.y = Math.cos(time * 0.005) * 0.2
 
     if (shaking) {
         box.position.x = Math.sin(time * 0.02) * 0.1

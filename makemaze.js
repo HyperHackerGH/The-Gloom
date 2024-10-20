@@ -148,7 +148,7 @@ function makemaze(width, height) {
     var teleporterpos = []
     var ct = []
 
-    while (teleporterpos.length < 4) {
+    while (teleporterpos.length < 3) {
         maze.forEach((v, i) => {
             v.forEach((j, k) => {
                 if (j == " " && i != 1 && k != 1) {

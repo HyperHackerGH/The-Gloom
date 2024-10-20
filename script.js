@@ -463,7 +463,7 @@ function update() {
                 }
                 
                 if (enemy.userData.type == "shooter") {
-                    if (time - enemy.userData.lastshot > enemy.userData.shottimeout) {
+                    if (time - enemy.userData.lastshot > enemy.userData.shottimeout && !teleporting) {
                         enemy.userData.lastshot = time
 
                         shoot(fromenemy = true, enemy.position)
@@ -479,10 +479,9 @@ function update() {
                 var camdir = camera.getWorldDirection(new THREE.Vector3(0, 0, -1))
                 var camangle = Math.atan2(camdir.x, camdir.z) * (180 / Math.PI) + 180
 
-                if (!teleporting) {
-                    enemy.position.add(playerdir.multiplyScalar(enemy.userData.speed))
-                    enemy.rotation.y = Math.atan2(playerdir.x, playerdir.z)
-                }
+                enemy.rotation.y = Math.atan2(playerdir.x, playerdir.z)
+
+                if (!teleporting) {enemy.position.add(playerdir.multiplyScalar(enemy.userData.speed))}
 
                 const direction = getreldir(
                     controls.getObject().position.x,
