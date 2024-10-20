@@ -1,9 +1,30 @@
 @import url("https://fonts.googleapis.com/css2?family=Emilys+Candy&display=swap");
 
+* {
+    outline: none
+}
+
 html, body {
     margin: 0;
     padding: 0;
     overflow: hidden
+}
+
+select {
+    width: 100px;
+    height: 30px;
+    border: none;
+    background: #000;
+    color: #fff;
+    font-family: "Emilys Candy";
+    font-size: 20px;
+    cursor: pointer;
+    display: block;
+    margin: 25px auto
+}
+
+option {
+    padding: 10px
 }
 
 #start {

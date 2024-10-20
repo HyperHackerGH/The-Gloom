@@ -41,6 +41,10 @@ var
     ttw = false,
     health = 3,
 
+    difficulty = null,
+    enemyspeed = 1,
+    enemyshottimeout = 0,
+
     teleporters = [],
     teleporting = false,
 
@@ -115,6 +119,21 @@ document.addEventListener("keyup", keyup, false)
 
 document.getElementById("startbutton").addEventListener("click", () => {
     if (!started) {
+        difficulty = document.getElementById("difficulty").value
+
+        if (difficulty == "hard") {
+            health = 1
+            enemyspeed = 1.3
+            enemyshottimeout = -1
+        }
+
+        if (difficulty == "easy") {
+            enemyspeed = 0.7
+            enemyshottimeout = 2
+        }
+
+        updatehealth()
+
         document.getElementById("game").style.display = "block"
         cleardialogue()
 
@@ -216,16 +235,18 @@ function update() {
         if (cooldownwidth < 400) {document.getElementById("cooldown").style.width = (400 - cooldownwidth).toString() + "px"}
         else {document.getElementById("cooldown").style.width = "0px"}
         
-        hordes.forEach((horde, index) => {
-            if (horde.every(enemy => !enemies.includes(enemy))) {
-                if (health < 3) {
-                    health++
-                    updatehealth()
+        if (difficulty != "hard") {
+            hordes.forEach((horde, index) => {
+                if (horde.every(enemy => !enemies.includes(enemy))) {
+                    if (health < 3) {
+                        health++
+                        updatehealth()
+                    }
+                    
+                    hordes.splice(index, 1)
                 }
-                
-                hordes.splice(index, 1)
-            }
-        })
+            })
+        }
 
         if (lookingatkey && !collectedkey) {document.getElementById("aimclick").style.display = "block"}
         else {document.getElementById("aimclick").style.display = "none"}
@@ -426,7 +447,9 @@ function update() {
                     velocity.x = 0
                     velocity.z = 0
 
-                    if (enemy.userData.type == "brute" || enemy.userData.type == "boss") {health = 0}
+                    if (enemy.userData.type == "brute" || enemy.userData.type == "boss") {
+                        if (difficulty != "easy") {health = 0}
+                    }
 
                     health--
                     updatehealth()
@@ -463,7 +486,7 @@ function update() {
                 }
                 
                 if (enemy.userData.type == "shooter") {
-                    if (time - enemy.userData.lastshot > enemy.userData.shottimeout && !teleporting) {
+                    if (time - enemy.userData.lastshot > enemy.userData.shottimeout + enemyshottimeout && !teleporting) {
                         enemy.userData.lastshot = time
 
                         shoot(fromenemy = true, enemy.position)
@@ -481,7 +504,7 @@ function update() {
 
                 enemy.rotation.y = Math.atan2(playerdir.x, playerdir.z)
 
-                if (!teleporting) {enemy.position.add(playerdir.multiplyScalar(enemy.userData.speed))}
+                if (!teleporting) {enemy.position.add(playerdir.multiplyScalar(enemy.userData.speed * enemyspeed))}
 
                 const direction = getreldir(
                     controls.getObject().position.x,
