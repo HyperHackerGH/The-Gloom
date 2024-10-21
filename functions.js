@@ -165,3 +165,27 @@ function playsound(name, stopafter, aggro = false, volume = 0.5, loop = false) {
         setTimeout(() => {sound.stop()}, stopafter)
     })
 }
+
+var explodes = [],
+    explodevels = []
+
+function addexplode(x, z) {
+    for (let i = 0; i < 20; i++) {
+        const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1)
+        const material = new THREE.MeshBasicMaterial({color: Math.random() * 0xffffff})
+        const cube = new THREE.Mesh(geometry, material)
+        
+        cube.position.set(x, 0, z)
+        
+        explodes.push(cube)
+        scene.add(cube)
+        
+        const velocity = new THREE.Vector3(
+            (Math.random() - 0.5),
+            0,
+            (Math.random() - 0.5)
+        )
+    
+        explodevels.push(velocity)
+    }
+}

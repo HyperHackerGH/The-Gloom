@@ -264,6 +264,19 @@ function update() {
             }
         }
 
+        if (collidecount > 0) {wallcolliding = true}
+        else {wallcolliding = false}
+
+        var infectedelem = document.getElementById("infected")
+
+        if (infected) {infectedelem.style.display = "block"}
+        else {infectedelem.style.display = "none"}
+
+        var speededelem = document.getElementById("speeded")
+
+        if (speeded) {speededelem.style.display = "block"}
+        else {speededelem.style.display = "none"}
+
         teleporters.forEach(teleporter => {
             if (colliding(controls.getObject().position.x, controls.getObject().position.z, teleporter.block.position.x, teleporter.block.position.z, 0.53)) {
                 if (!teleporter.block.userData.teleported) {
@@ -289,6 +302,22 @@ function update() {
                     setTimeout(() => {teleporting = false}, 2000)
                 }
             }
+
+            bullets.forEach((bullet, i) => {
+                if (colliding(bullet.position.x, bullet.position.z, teleporter.block.position.x, teleporter.block.position.z, 0.5)) {
+                    addexplode(bullet.position.x, bullet.position.z)
+                    
+                    scene.remove(bullet)
+                    bullets.splice(i, 1)
+
+                    teleporter.block.userData.teleported = true
+                    teleporter.target.userData.teleported = true
+
+                    teleporters.splice(teleporters.indexOf(teleporter), 1)
+                    scene.remove(teleporter.block)
+                    scene.remove(teleporter.target)
+                }
+            })
         })
 
         mazepieces.forEach(piece => {
@@ -327,22 +356,11 @@ function update() {
             }
         })
 
-        if (collidecount > 0) {wallcolliding = true}
-        else {wallcolliding = false}
-
-        var infectedelem = document.getElementById("infected")
-
-        if (infected) {infectedelem.style.display = "block"}
-        else {infectedelem.style.display = "none"}
-
-        var speededelem = document.getElementById("speeded")
-
-        if (speeded) {speededelem.style.display = "block"}
-        else {speededelem.style.display = "none"}
-
         enemybullets.forEach((bullet, bulletindex) => {
             bullets.forEach((b, i) => {
                 if (colliding(bullet.position.x, bullet.position.z, b.position.x, b.position.z, 0.5)) {
+                    addexplode(bullet.position.x, bullet.position.z)
+
                     scene.remove(bullet)
                     enemybullets.splice(bulletindex, 1)
                     
@@ -366,6 +384,18 @@ function update() {
             const head = enemy.children.find(child => child.geometry.parameters.width == 0.2)
             const larm = enemy.children.find(child => child.geometry.parameters.width == 0.15 && child.position.x == -0.35)
             const rarm = enemy.children.find(child => child.geometry.parameters.width == 0.15 && child.position.x == 0.35)
+
+            explodes.forEach((explode, i) => {
+                if (colliding(explode.position.x, explode.position.z, enemy.position.x, enemy.position.z, 0.2)) {
+                    scene.remove(explode)
+
+                    explodes.splice(i, 1)
+                    explodevels.splice(i, 1)
+
+                    scene.remove(enemy)
+                    enemies.splice(index, 1)
+                }
+            })
             
             bullets.forEach((bullet, bulletindex) => {
                 mazepieces.forEach((piece) => {
@@ -687,10 +717,12 @@ function gameloop() {
         key.position.y = Math.sin(key.rotation.y) * 0.05 - 0.4
     }
 
+    for (let i = 0; i < explodes.length; i++) {explodes[i].position.add(explodevels[i])}
+
     update()
-    renderer.render(scene, camera)
     
     requestAnimationFrame(gameloop)
+    renderer.render(scene, camera)
 }
 
 gameloop()
