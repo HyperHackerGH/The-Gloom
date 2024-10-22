@@ -125,14 +125,13 @@ document.getElementById("startbutton").addEventListener("click", () => {
             health = 1
             enemyspeed = 1.2
             enemyshottimeout = -1
+            for (let h of document.querySelectorAll(".healthbar")) {h.style.display = "none"}
         }
 
         if (difficulty == "easy") {
             enemyspeed = 0.7
             enemyshottimeout = 2
         }
-
-        updatehealth()
 
         document.getElementById("game").style.display = "block"
         cleardialogue()
@@ -306,6 +305,7 @@ function update() {
             bullets.forEach((bullet, i) => {
                 if (colliding(bullet.position.x, bullet.position.z, teleporter.block.position.x, teleporter.block.position.z, 0.5)) {
                     addexplode(bullet.position.x, bullet.position.z)
+                    hitaims()
                     
                     scene.remove(bullet)
                     bullets.splice(i, 1)
@@ -387,6 +387,7 @@ function update() {
 
             explodes.forEach((explode, i) => {
                 if (colliding(explode.position.x, explode.position.z, enemy.position.x, enemy.position.z, 0.2)) {
+                    hitaims()
                     scene.remove(explode)
 
                     explodes.splice(i, 1)
@@ -436,17 +437,8 @@ function update() {
                     scene.remove(bullet)
                     bullets.splice(bulletindex, 1)
 
-                    const hitaims = document.querySelectorAll(".hitaims")
-                    
-                    hitaims.forEach(aim => {
-                        aim.style.display = "inline"
-                        if (headshot) {aim.style.backgroundColor = "#a347ff"}
-                    })
-                    
-                    setTimeout(() => {hitaims.forEach(aim => {
-                        aim.style.display = "none"
-                        if (headshot) {aim.style.backgroundColor = "#008ca8"}
-                    })}, 100)
+                    if (headshot) {hitaims(true)}
+                    else {hitaims()}
                 }
             })
             
@@ -717,7 +709,15 @@ function gameloop() {
         key.position.y = Math.sin(key.rotation.y) * 0.05 - 0.4
     }
 
-    for (let i = 0; i < explodes.length; i++) {explodes[i].position.add(explodevels[i])}
+    for (let i = 0; i < explodes.length; i++) {
+        if (explodes[i].position.distanceTo(explodes[i].userData.startpos) < 10) {explodes[i].position.add(explodevels[i])}
+        else {
+            scene.remove(explodes[i])
+
+            explodes.splice(i, 1)
+            explodevels.splice(i, 1)
+        }
+    }
 
     update()
     

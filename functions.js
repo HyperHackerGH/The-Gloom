@@ -170,12 +170,13 @@ var explodes = [],
     explodevels = []
 
 function addexplode(x, z) {
-    for (let i = 0; i < 20; i++) {
-        const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1)
+    for (let i = 0; i < 40; i++) {
+        const geometry = new THREE.BoxGeometry(0.05, 0.05, 0.05)
         const material = new THREE.MeshBasicMaterial({color: Math.random() * 0xffffff})
         const cube = new THREE.Mesh(geometry, material)
         
         cube.position.set(x, 0, z)
+        cube.userData.startpos = new THREE.Vector3(x, 0, z)
         
         explodes.push(cube)
         scene.add(cube)
@@ -188,4 +189,18 @@ function addexplode(x, z) {
     
         explodevels.push(velocity)
     }
+}
+
+function hitaims(headshot = false) {
+    const hitaims = document.querySelectorAll(".hitaims")
+                    
+    hitaims.forEach(aim => {
+        aim.style.display = "inline"
+        if (headshot) {aim.style.backgroundColor = "#a347ff"}
+    })
+    
+    setTimeout(() => {hitaims.forEach(aim => {
+        aim.style.display = "none"
+        if (headshot) {aim.style.backgroundColor = "#008ca8"}
+    })}, 100)
 }
