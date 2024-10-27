@@ -171,7 +171,9 @@ document.body.addEventListener("click", (e) => {
 
         else {
             const type = e.which == 1 ? "left" : e.which == 3 ? "right" : null
-            shoot()
+            
+            if (type == "left") {shoot()}
+            if (type == "right") {shoot(false, null, true)}
         }
     }
 }, false)
@@ -235,10 +237,15 @@ function update() {
 
         var collidecount = 0
 
-        const cooldownwidth = performance.now() - lastshot
+        const cooldownwidth = performance.now() - lastshotred
 
         if (cooldownwidth < 400) {document.getElementById("cooldown").style.width = (400 - cooldownwidth).toString() + "px"}
         else {document.getElementById("cooldown").style.width = "0px"}
+
+        const cooldownwidth1 = performance.now() - lastshotblue
+
+        if (cooldownwidth1 < 10000) {document.getElementById("cooldown1").style.width = ((10000 - cooldownwidth1) / 10000 * 400).toString() + "px"}
+        else {document.getElementById("cooldown1").style.width = "0px"}
         
         if (difficulty != "hard") {
             hordes.forEach((horde, index) => {
@@ -307,23 +314,6 @@ function update() {
                     setTimeout(() => {teleporting = false}, 2000)
                 }
             }
-
-            bullets.forEach((bullet, i) => {
-                if (colliding(bullet.position.x, bullet.position.z, teleporter.block.position.x, teleporter.block.position.z, 0.5)) {
-                    addexplode(bullet.position.x, bullet.position.z)
-                    hitaims()
-                    
-                    scene.remove(bullet)
-                    bullets.splice(i, 1)
-
-                    teleporter.block.userData.teleported = true
-                    teleporter.target.userData.teleported = true
-
-                    teleporters.splice(teleporters.indexOf(teleporter), 1)
-                    scene.remove(teleporter.block)
-                    scene.remove(teleporter.target)
-                }
-            })
         })
 
         mazepieces.forEach(piece => {
@@ -422,6 +412,7 @@ function update() {
                         scene.remove(enemy)
                         enemies.splice(index, 1)
 
+                        if (bullet.userData.type == "blue") {addexplode(enemy.position.x, enemy.position.z)}
                         if (enemy.userData.type == "boss") {addenemy(enemy.position.x, enemy.position.z, "shooter")}
 
                         if (!collectedkey && !key) {
