@@ -143,7 +143,7 @@ function shufflearrays(arr) {
     return result
 }
 
-function playsound(name, stopafter, aggro = false, volume = 0.5, loop = false) {
+function playsound(name, stopafter, aggro = false, volume = 1, loop = false) {
     if (aggro) {
         if (performance.now() - lasound < 8000) {return}
         else {lasound = performance.now()}

@@ -119,6 +119,9 @@ document.addEventListener("keyup", keyup, false)
 
 document.getElementById("startbutton").addEventListener("click", () => {
     if (!started) {
+        playsound("background", 60000)
+        setInterval(() => {playsound("background", 60000)}, 60000)
+
         difficulty = document.getElementById("difficulty").value
 
         if (difficulty == "hard") {
@@ -153,7 +156,7 @@ document.getElementById("startbutton").addEventListener("click", () => {
     }
 }, false)
 
-document.body.addEventListener("click", () => {
+document.body.addEventListener("click", (e) => {
     if (started && !done) {
         controls.lock()
         // if (document.fullscreenElement == null) {document.documentElement.requestFullscreen()}
@@ -166,7 +169,10 @@ document.body.addEventListener("click", () => {
             dialogue("You have collected the key.", clearafter = 2)
         }
 
-        else {shoot()}
+        else {
+            const type = e.which == 1 ? "left" : e.which == 3 ? "right" : null
+            shoot()
+        }
     }
 }, false)
 
@@ -330,7 +336,8 @@ function update() {
 
                 const angle = ((Math.atan2(playerpos.z - piece.position.z, playerpos.x - piece.position.x) * (180 / Math.PI)) + 360) % 360
 
-                var newx = playerpos.x, newz = playerpos.z
+                var newx = playerpos.x,
+                    newz = playerpos.z
                 const distin = 0.1
 
                 if (angle >= 45 && angle < 135) {newz = newz - distin}  
