@@ -317,6 +317,16 @@ function update() {
         })
 
         mazepieces.forEach(piece => {
+            for (let i = 0; i < explodes.length; i++) {
+                if (colliding(piece.position.x, piece.position.z, explodes[i].position.x, explodes[i].position.z, 2)) {
+                    console.log("a")
+                    scene.remove(explodes[i])
+        
+                    explodes.splice(i, 1)
+                    explodevels.splice(i, 1)
+                }
+            }
+
             if (colliding(controls.getObject().position.x, controls.getObject().position.z, piece.position.x, piece.position.z, 2.2)) {
                 collidecount++
 
