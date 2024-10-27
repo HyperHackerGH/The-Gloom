@@ -319,7 +319,6 @@ function update() {
         mazepieces.forEach(piece => {
             for (let i = 0; i < explodes.length; i++) {
                 if (colliding(piece.position.x, piece.position.z, explodes[i].position.x, explodes[i].position.z, 2)) {
-                    console.log("a")
                     scene.remove(explodes[i])
         
                     explodes.splice(i, 1)
