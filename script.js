@@ -151,7 +151,7 @@ document.getElementById("startbutton").addEventListener("click", () => {
             started = true
             begintime = performance.now()
             dialogue("Welcome to The Gloom.", clearafter = 2)
-            // if (document.fullscreenElement == null) {document.documentElement.requestFullscreen()}
+            if (document.fullscreenElement == null) {document.documentElement.requestFullscreen()}
         }, 1000)
     }
 }, false)
@@ -159,7 +159,7 @@ document.getElementById("startbutton").addEventListener("click", () => {
 document.body.addEventListener("click", (e) => {
     if (started && !done) {
         controls.lock()
-        // if (document.fullscreenElement == null) {document.documentElement.requestFullscreen()}
+        if (document.fullscreenElement == null) {document.documentElement.requestFullscreen()}
     }
 
     if (started && controls.isLocked) {
@@ -210,12 +210,14 @@ teleporterpos.forEach(teleporter => {
 })
 
 // addenemy(-53, -49)
+// key = addkey(gp(1), gp(2))
 
 function update() {
     if (controls.isLocked) {
         var enemydirs = []
         var time = performance.now()
         var delta = (time - lasttime) / 1000
+        var collidecount = 0
 
         velocity.x -= velocity.x * 10 * delta
         velocity.z -= velocity.z * 10 * delta
@@ -234,8 +236,6 @@ function update() {
             controls.getObject().translateX(velocity.x * delta)
             controls.getObject().translateZ(velocity.z * delta)
         }
-
-        var collidecount = 0
 
         const cooldownwidth = performance.now() - lastshotred
 
@@ -290,7 +290,7 @@ function update() {
         else {speededelem.style.display = "none"}
 
         teleporters.forEach(teleporter => {
-            if (colliding(controls.getObject().position.x, controls.getObject().position.z, teleporter.block.position.x, teleporter.block.position.z, 0.53)) {
+            if (colliding(controls.getObject().position.x, controls.getObject().position.z, teleporter.block.position.x, teleporter.block.position.z, 0.52)) {
                 if (!teleporter.block.userData.teleported) {
                     teleporting = true
 
