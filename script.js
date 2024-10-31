@@ -170,7 +170,7 @@ document.body.addEventListener("click", (e) => {
         }
 
         else {
-            const type = e.which == 1 ? "left" : e.which == 3 ? "right" : null
+            const type = e.button == 0 ? "left" : e.button == 2 ? "right" : null
             
             if (type == "left") {shoot()}
             if (type == "right") {shoot(false, null, true)}
