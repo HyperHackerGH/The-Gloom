@@ -305,7 +305,7 @@ function update() {
 
                     for (let i = 0; i < 100; i++) {
                         setTimeout(() => {document.getElementById("teleporting").style.opacity = i / 100}, i * 10)
-                        setTimeout(() => {document.getElementById("teleporting").style.opacity = (100 - i) / 100}, i * 10 + 1000)
+                        setTimeout(() => {document.getElementById("teleporting").style.opacity = 1 - (i / 100)}, i * 10 + 1000)
                     }
 
                     teleporter.block.userData.teleported = true
